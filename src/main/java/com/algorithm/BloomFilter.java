@@ -16,17 +16,31 @@ public class BloomFilter {
         this.bitSet = new BitSet(2 << power);
     }
 
+    /**
+     * set bitmap
+     *
+     * @param value
+     */
     public void set(String value){
+        assert value != null;
+
         for (int  i = 0; i < 20; i++) {
             Hash hash = new SimpleHash(i + 1, 0xFFFFFFFF);
             int pos = getPos(hash, value);
 
-            System.out.println((i+1) + ": " + pos);
             bitSet.set(pos, true);
         }
     }
 
+    /**
+     * False positives & False negatives
+     *
+     * @param value
+     * @return
+     */
     public boolean find(String value){
+        assert value != null;
+
         for (int  i = 0; i < 20; i++) {
             Hash hash = new SimpleHash(i + 1, 0xFFFFFFFF);
             int pos = getPos(hash, value);
@@ -40,15 +54,7 @@ public class BloomFilter {
 
     private int getPos(Hash hash, String value){
         long hashValue = getUnsignedInt(hash.hash(value));
-        return (int) (hashValue % (2 << power));
-    }
-
-    public static void main(String[] args){
-        BloomFilter bloomFilter = new BloomFilter(20);
-        bloomFilter.set("wangzh ok");
-
-        System.out.println(bloomFilter.find("wangzh ok"));
-        System.out.println(bloomFilter.find("wangzh ok!"));
+        return (int) (hashValue % (1 << power));
     }
 
     public static long getUnsignedInt(int x) {
