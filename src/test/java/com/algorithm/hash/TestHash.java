@@ -18,7 +18,7 @@ public class TestHash {
 
     @Test
     public void testCuckooFilter(){
-        CuckooFilter filter = new CuckooFilter(10);
+        CuckooHash filter = new CuckooHash(10);
         String x = "wang zunhui";
         int f = filter.fingerPrint(x);
         int i1 = filter.hash(x);

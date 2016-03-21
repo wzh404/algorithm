@@ -3,7 +3,7 @@ package com.algorithm.hash;
 /**
  * Created by wangzunhui on 2016/3/11.
  */
-public class CuckooFilter {
+public class CuckooHash {
     public static int MAX_NUM_KICKS = 5;
 
     private int power;
@@ -75,9 +75,31 @@ public class CuckooFilter {
 
             return null;
         }
+
+        public boolean isEntry(int pos, int f){
+            for (Entry entry : this.slots[pos].entries){
+                if (entry.getState() == Entry.USED && entry.finger == f){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public boolean removeEntry(int pos, int f){
+            for (Entry entry : this.slots[pos].entries){
+                if (entry.getState() == Entry.USED && entry.finger == f){
+                    entry.setState(Entry.DELETED);
+                    entry.finger = 0;
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
-    public CuckooFilter(int power){
+    public CuckooHash(int power){
         this.power = power;
         this.buckets = new Bucket[2];
         buckets[0] = new Bucket(1 << power);
@@ -152,5 +174,30 @@ public class CuckooFilter {
                 return;
             }
         }
+    }
+
+    public boolean lookup(String x){
+        int f = fingerPrint(x);
+        int i1 = hash(x);
+        int i2 = i1 ^ hash(new Integer(f).toString());
+
+        if (buckets[0].isEntry(i1, f) || buckets[1].isEntry(i2, f)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean remove(String x){
+        int f = fingerPrint(x);
+        int i1 = hash(x);
+        int i2 = i1 ^ hash(new Integer(f).toString());
+
+        if (buckets[0].removeEntry(i1, f) || buckets[1].removeEntry(i2, f)){
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
